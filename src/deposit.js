@@ -75,7 +75,7 @@ function Deposit(){
         txtcolor="white"
         body={ depositCount > 0 ? (
                 <>
-                <h6><b>Balance: ${balance}</b> </h6>
+                <h6><b>Your deposit was successful. <br/> <br/> New balance: ${balance}</b> </h6>
                 <h6>How much would you like to deposit?</h6>
                 <input type="input" className="form-control" value={deposit} id="depositamt" placeholder = "Deposit Amount" onInput={onInput} /><br/>
                 <button type="submit" className="btn btn-light" id="btndeposit" onClick={() => {onSubmit({deposit})}}>Deposit</button>
@@ -89,7 +89,6 @@ function Deposit(){
                 </>
                 )}
     />
-    <DynamicTable />
     </div>
             
             

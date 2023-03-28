@@ -13,26 +13,26 @@ function Withdraw(){
     const ctx                                       = React.useContext(UserContext);
     const [users, setUsers]                         = React.useContext(UserContext);
     const foundidx                                  = ctx[0].findIndex(x => x.loggedIn === 1);
-    const startingBalance                           = ctx[0][foundidx].balance;
+    const startingBalance                           = parseFloat(ctx[0][foundidx].balance).toFixed(2);
     const [withdrawalCount, setWithdrawalCount]     = React.useState(0);
     var ctxusers = [];
     
 
     console.log('Withdraw.js - Withdraw Loading');
-    console.log('Withdraw.js - Logged In User Index: ', foundidx); 
+    //console.log('Withdraw.js - Logged In User Index: ', foundidx); 
     
     const onInput = (e) => setWithdrawal(e.target.value);
     
     const onSubmit = (amount) => {
         let newBalance = 0; 
-        console.log('Withdraw.js - On Submit Fired with an amount of $', amount);
+        //console.log('Withdraw.js - On Submit Fired with an amount of $', amount);
         ctxusers = ctx[0];
-        console.log('CTX Users: ', ctxusers);
+        //console.log('CTX Users: ', ctxusers);
 
         
         if (withdrawalCount === 0){
             console.log('# of withdrawals is: ', withdrawalCount);
-                if (withdrawal > startingBalance) {
+                if (parseFloat(withdrawal) > parseFloat(startingBalance)) {
                     console.log(withdrawal);
                     console.log(startingBalance);
                     alert("You cannot withdraw more than your total available balance. Please try again.");
@@ -45,10 +45,13 @@ function Withdraw(){
                     setBalance(newBalance);
                     ctxusers[foundidx].balance = newBalance;
                     setUsers(ctxusers);
+                    console.log('# of withdrawals is: ', withdrawalCount);
+                    setWithdrawal('');
+                    setWithdrawalCount(withdrawalCount + 1);
                 }
         }
         else if (withdrawalCount > 0) {
-            if (withdrawal > balance) {
+            if (parseFloat(withdrawal) > parseFloat(balance)) {
                 console.log(withdrawal);
                 console.log(balance);
                 alert("You cannot withdraw more than your total available balance. Please try again.");
@@ -62,12 +65,13 @@ function Withdraw(){
                 setBalance(newBalance);
                 ctxusers[foundidx].balance = newBalance;
                 setUsers(ctxusers);
+                console.log('# of withdrawals is: ', withdrawalCount);
+                setWithdrawal('');
+                setWithdrawalCount(withdrawalCount + 1);
             }   
         }
         
-        console.log('# of withdrawals is: ', withdrawalCount);
-        setWithdrawal('');
-        setWithdrawalCount(withdrawalCount + 1);
+        
     }
     
 
@@ -79,7 +83,7 @@ function Withdraw(){
                 txtcolor="white"
                 body={ withdrawalCount > 0 ? (
                         <>
-                        <h6><b>Balance: ${balance}</b> </h6>
+                        <h6><b>Your withdrawal was successful. <br/> <br/> New balance: ${balance} <br/> <br/></b> </h6>
                         <h6>How much would you like to withdraw?</h6>
                         <input type="input" className="form-control" value={withdrawal} id="withdrawamt" placeholder = "Withdrawal Amount" onInput={onInput} /><br/>
                         <button type="submit" className="btn btn-light" id="btnwithdraw" onClick={() => {onSubmit({withdrawal})}}>Withdraw</button>
