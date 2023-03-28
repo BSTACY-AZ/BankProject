@@ -1,14 +1,14 @@
 import React from 'react';
-//import UserContext from './index.js';
+import UserContext from './App.js';
 import DynamicTable from "./DynamicTable";
 
 
 function AllData(){
     
-    //const ctx = React.useContext(UserContext);
-    //const userData = ctx.users;
+    const ctx = React.useContext(UserContext);
+    const userData = ctx;
 
-    console.log('AllData.js - '/*, userData*/);
+    console.log('AllData.js - ', userData);
      
     
     return(

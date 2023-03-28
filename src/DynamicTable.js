@@ -1,6 +1,5 @@
 import React from 'react';
-
-//import UserContext from './index.js';
+import { UserContext } from './App.js';
 
 
 
@@ -8,11 +7,10 @@ import React from 'react';
     arr[index]['key'] = index;
   }
 function DynamicTable(){
-
-  // get table column
-/* 
-const ctx = React.useContext(UserContext);
-const userData = ctx.users;
+// get table column
+ 
+ const ctx = React.useContext(UserContext);
+ const userData = ctx[0];
 userData.forEach(myFunction);
 
  const column = Object.keys(userData[0]);
@@ -48,13 +46,6 @@ const tdData =() =>{
         </tbody>
        </table>
 
-)*/
-
-return(
-  <h1>placeholder<br/>
-      
-  </h1>
-);
+)
 }
-
 export default DynamicTable;

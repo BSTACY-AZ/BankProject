@@ -1,6 +1,8 @@
 import React from 'react';
 import Card from './card.js';
-//import UserContext from './index.js';
+import { UserContext } from './App.js';
+import DynamicTable from "./DynamicTable";;
+
 
 
 
@@ -10,15 +12,17 @@ function Deposit(){
     
     const [deposit, setDeposit]             = React.useState('');
     const [balance, setBalance]             = React.useState('');
-    //const ctx                               = React.useContext(UserContext);
-    //const foundidx                          = ctx.users.findIndex(x => x.loggedIn === 1);
-    //const startingBalance                   = ctx.users[foundidx].balance;
-    let deposits                            = 0;
-    
+    const ctx                               = React.useContext(UserContext);
+    const [users, setUsers]                 = React.useContext(UserContext);
+    const foundidx                          = ctx[0].findIndex(x => x.loggedIn === 1);
+    const startingBalance                   = parseFloat(ctx[0][foundidx].balance).toFixed(2);
+    const [depositCount, setDepositCount]   = React.useState(0);
+    var ctxusers = [];
     
 
     console.log('Deposit.js - Deposit Loading');
-    //console.log('Deposit.js - Logged In User Index: ', foundidx); 
+    console.log('Deposit.js - Logged In User Index: ', foundidx); 
+    console.log('Deposit.js - Starting Balance: $ ', startingBalance); 
     
     
     
@@ -27,16 +31,35 @@ function Deposit(){
     
 
     const onSubmit = (amount) => {
-        console.log('Deposit.js - On Submit Fired with an amount of $', amount);
-        //console.log('Deposit.js - ', ctx.users[foundidx].balance);
-        //let newBalance = parseFloat(ctx.users[foundidx].balance) + parseFloat(deposit);
-        //console.log('Deposit.js - New Balance to be: ', newBalance);
-        //ctx.users[foundidx].balance = parseFloat(newBalance).toFixed(2);
-        //console.log('Deposit.js - CTX Balance is now: ', ctx.users[foundidx].balance);
-        //setBalance(newBalance);
-        deposits = deposits + 1;
-        setDeposit('');
         
+        let newBalance = 0; 
+        console.log('Deposit.js - On Submit Fired with an amount of $', amount);
+        ctxusers = ctx[0];
+        //console.log('CTX Users: ', ctxusers[foundidx].balance);
+        console.log('CTX Users: ', ctxusers);
+        
+        if (depositCount === 0){
+            console.log('# of deposits is: ', depositCount);
+            newBalance = parseFloat(startingBalance) + parseFloat(deposit);
+            newBalance = parseFloat(newBalance).toFixed(2);
+            console.log('Deposit.js - First Deposit - New Balance to be: ', newBalance);
+            setBalance(newBalance);
+            ctxusers[foundidx].balance = newBalance;
+            setUsers(ctxusers);
+        }
+        else {
+            console.log('# of deposits is: ', depositCount);
+            newBalance = parseFloat(balance) + parseFloat(deposit);
+            newBalance = parseFloat(newBalance).toFixed(2);
+            console.log('Deposit.js - Subsequent Deposit - New Balance to be: ', newBalance);
+            setBalance(newBalance);
+            ctxusers[foundidx].balance = newBalance;
+            setUsers(ctxusers);
+        }
+        
+        console.log('# of deposits is: ', depositCount);
+        setDeposit('');
+        setDepositCount(depositCount + 1);
         
     }
     
@@ -45,27 +68,31 @@ function Deposit(){
 
 
     return(
-        
-            <Card
-                bgcolor="success"
-                header="Deposit"
-                txtcolor="white"
-                body={ deposits > 0 ? (
-                        <>
-                        <h6><b>Balance: ${balance}</b> </h6>
-                        <h6>How much would you like to deposit?</h6>
-                        <input type="input" className="form-control" value={deposit} id="depositamt" placeholder = "Deposit Amount" onInput={onInput} /><br/>
-                        <button type="submit" className="btn btn-light" id="btndeposit" onClick={() => {onSubmit({deposit})}}>Deposit</button>
-                        </>
-                    ):(
-                        <>
-                        <h6><b>Balance: replace with bracket starting balance bracket</b> </h6>
-                        <h6>How much would you like to deposit?</h6>
-                        <input type="input" className="form-control" value={deposit} id="depositamt" placeholder = "Deposit Amount" onInput={onInput} /><br/>
-                        <button type="submit" className="btn btn-light" id="btndeposit" onClick={() => {onSubmit({deposit})}}>Deposit</button>
-                        </>
-                        )}
-            />
+        <div>
+        <Card
+        bgcolor="success"
+        header="Deposit"
+        txtcolor="white"
+        body={ depositCount > 0 ? (
+                <>
+                <h6><b>Balance: ${balance}</b> </h6>
+                <h6>How much would you like to deposit?</h6>
+                <input type="input" className="form-control" value={deposit} id="depositamt" placeholder = "Deposit Amount" onInput={onInput} /><br/>
+                <button type="submit" className="btn btn-light" id="btndeposit" onClick={() => {onSubmit({deposit})}}>Deposit</button>
+                </>
+            ):(
+                <>
+                <h6><b>Balance:  ${startingBalance}</b> </h6>
+                <h6>How much would you like to deposit?</h6>
+                <input type="input" className="form-control" value={deposit} id="depositamt" placeholder = "Deposit Amount" onInput={onInput} /><br/>
+                <button type="submit" className="btn btn-light" id="btndeposit" onClick={() => {onSubmit({deposit})}}>Deposit</button>
+                </>
+                )}
+    />
+    <DynamicTable />
+    </div>
+            
+            
     )
 }
 

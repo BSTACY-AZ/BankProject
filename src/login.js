@@ -1,7 +1,6 @@
 import React from 'react';
 import Card from './card.js';
 import { UserContext } from './App.js';
-import DynamicTable from "./DynamicTable";
 
 let startingBalance = 0.00;
 
@@ -12,22 +11,20 @@ export default function Login(){
     const [userPassword, setUserPassword]   = React.useState('');
     const [loggedinUser, setLoggedInUser]   = React.useState(null);
     const [user, setUser]                   = React.useState();
-    const [users, setUsers]                 = React.useState([]);
+    const [users, setUsers]                 = React.useContext(UserContext);
     
     const ctx                               = React.useContext(UserContext);
-
-    console.log('Login.js - before any other function - ', ctx);
+    var ctxusers = [];
 
     function handleClick(){
         
-        console.log('Login.js - handleClick fired - ', ctx.users);
-        const activeLogin = ctx.users.findIndex(x => x.loggedIn === 1)
+        //console.log('Login.js - ctxusers - ', ctxusers);
+        const activeLogin = ctx[0].findIndex(x => x.loggedIn === 1)
         
         if (activeLogin === -1){
-            console.log('Login.js - no active login');
-            console.log('Login.js - ',userName,userPassword);
-            //console.log('Login.js - ctx users fired with ', ctx.users);
-            console.log(findUser(userName, userPassword));
+            //console.log('Login.js - no active login');
+            //console.log('Login.js - ',userName,userPassword);
+            findUser(userName, userPassword);
         }
         else {
             if (window.confirm("There is already a logged in user session. Do you wish to log in as a different user?")) {
@@ -42,20 +39,23 @@ export default function Login(){
     }
 
     function logOut(){
+
         console.log('Login.js - logOut fired');
-        let updatedValue = [...ctx.users];
+        let updatedValue = [...ctx[0]];
         updatedValue.forEach(element => element.loggedIn = 0);
         setUsers(updatedValue);
 
     }
+
     function handleUpdate(i){
         
-        
-        let updatedValue = [...ctx.users];
+        let updatedValue = [...ctx[0]];
         updatedValue[i].loggedIn = 1;
         console.log('Login.js - After logged in is updated: ', updatedValue);
         console.log('Login.js - handle update values are now: ', updatedValue);
         setUsers(updatedValue);
+        setLoggedIn(1);
+        console.log('users: ', users);
         
     }
 
@@ -63,12 +63,15 @@ export default function Login(){
         console.log('Login.js - find user fired');
         console.log("Login.js - find user called, looking for email: ", userName);
         
-        setUsers(ctx.users);
-        console.log("Login.js - setUser just called, ctx.users values: ", ctx.users);
+        setUsers(ctx[0]);
+        console.log("Login.js - setUser just called, ctx values: ", ctx[0]);
         
-        const foundidx = ctx.users.findIndex(x => x.email === userName);
-        console.log(foundidx);
-        const found = ctx.users[foundidx];
+        const foundidx = ctx[0].findIndex(x => x.email === userName);
+        const foundkey = ctx[0][foundidx].key;
+        
+        console.log('Index is: ', foundidx);
+        console.log('Key is: ',foundkey);
+        const found = ctx[0][foundidx];
         console.log("Login.js - result is:", found);
         
         let userFirstName = null;
@@ -85,16 +88,16 @@ export default function Login(){
             validatePassword(found.password, userPassword, foundidx);
             userFirstName = found.name;
             setUser(userFirstName);
-            console.log('Login.js - Just prior to handleUpdate: ', ctx.users);
+            console.log('Login.js - Just prior to handleUpdate: ', ctx[0]);
             handleUpdate(foundidx);
-            console.log('Login.js - handleUpdate called', ctx.users);
+            console.log('Login.js - handleUpdate called', ctx[0]);
             console.log('Login.js - ', userFirstName, " has logged in.")
             startingBalance = parseFloat(found.balance).toFixed(2);
-            found.balance = startingBalance;
+            //found.balance = startingBalance;
             console.log('Login.js - Starting Balance is: ', startingBalance);
             console.log('Login.js - balance is: ', found.balance);
-            ctx.users[foundidx].balance = startingBalance;
-            console.log('Login.js - balance after SetBalance is: ', ctx.users[foundidx].balance);
+            ctx[foundidx].balance = startingBalance;
+            console.log('Login.js - balance after SetBalance is: ', ctx[0][foundidx].balance);
             
         }
         
@@ -105,17 +108,14 @@ export default function Login(){
     function validatePassword(password, userPassword, foundidx){
 
         console.log('Login.js - Entered password: ', userPassword, ' Stored password for user: ', password);
-        console.log('Login.js - validatePassword fired: ', ctx.users);
+        console.log('Login.js - validatePassword fired: ', ctx[0]);
 
         if (password === userPassword)
         {
             console.log('Login.js - MATCH: attempted login password of: ', userPassword, " matches stored password of: ", password);
-            console.log('Login.js - Pre Login Set ', ctx.users);
-            setLoggedIn(1);
-            console.log('Login.js - Post Login Set ', ctx.users);
             setLoggedInUser(foundidx);
             console.log('User with index id of: ', foundidx, " has been logged in.");
-            console.log('Login.js - ctx.users content: ', ctx.users);
+            console.log('Login.js - ctx content: ', ctx[0]);
         }
         else {
             console.log('Login.js - MISMATCH: attempted login password of: ', userPassword, " does NOT match stored password of: ", password);
@@ -148,14 +148,14 @@ export default function Login(){
                     <>
                     <h6><b>Current balance:</b> ${startingBalance}</h6>
                     <h6>What would you like to do?</h6>
-                    <a className="nav-link" href="#/deposit/">Make Deposit</a>
-                    <a className="nav-link" href="#/withdraw/">Make Withdrawal</a>
+                    <a className="link-primary" href="#/deposit/">Make Deposit</a>
+                    <br/>
+                    <a className="link-primary" href="#/withdraw/">Make Withdrawal</a>
                     </>
                 )}
 
                 
         />
-        <DynamicTable />
         </div>
     )
 }
